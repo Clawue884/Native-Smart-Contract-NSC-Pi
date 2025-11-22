@@ -1,8 +1,10 @@
 ------
 ---
-ia
-🌐 Pi Native Smart Contract (NSC) — Predictive Development Suite
 
+🌐 Pi Native Smart Contract (NSC) — Predictive Development Suite
+![Roadmap](https://img.shields.io/badge/Roadmap-Active-brightgreen?style=for-the-badge)
+![Status](https://img.shields.io/badge/Development-In%20Progress-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.1.0-orange?style=for-the-badge)
 Complete, Advanced, Modular, & Fully Developer-Ready
 
 Selamat datang di Pi NSC Predictive Development Suite, sebuah proyek komprehensif yang memodelkan, memprediksi, dan mensimulasikan bagaimana Native Smart Contract (NSC) Pi Network kemungkinan bekerja—berdasarkan:
@@ -22,7 +24,16 @@ Repository ini menyediakan kompiler, VM, bahasa prediksi (PiLang), contoh kontra
 
 
 ---
+## 🌌 Project Vision
 
+Pi Native Smart Contract (NSC) Predictive Suite dibangun untuk menjadi ekosistem pengembangan paling lengkap untuk memodelkan bagaimana smart contract asli Pi Network bekerja.
+
+Tujuan utamanya adalah:
+- menyediakan bahasa kontrak (PiLang) yang aman, deterministik, dan resource-oriented  
+- membangun PiVM yang mampu mensimulasikan eksekusi natively seperti VM resmi Pi kelak  
+- menyediakan toolchain lengkap (compiler → VM → SDK → testnet)  
+- memungkinkan developer menguji, memverifikasi, dan mensimulasikan kontrak dalam lingkungan lokal  
+- memperluas wawasan komunitas developer Pi ke arah teknologi blockchain modern
 🏷️ Badges
 
 ![Status](https://img.shields.io/badge/status-active-green)
@@ -142,7 +153,31 @@ curl localhost:4301/contract/PiToken
 
 
 ---
+## 📡 Development Status Overview
 
+Fase pengembangan saat ini berfokus pada:
+
+### 🔨 Core Systems
+- Stabilitas compiler & VM  
+- Perluasan sintaks PiLang  
+- Determinisme WASM output  
+
+### 🔐 Security Enhancements
+- Static Analyzer v1  
+- Borrow-checker improvement  
+- Formal specification system  
+
+### 🧰 Developer Tools
+- Debugger CLI  
+- Testnet 3-node  
+- Fuzzing engine v2  
+
+### 🌐 Ecosystem Components
+- RPC Node API  
+- Package Manager (pipm)  
+- Event indexer prototipe  
+
+Setiap update besar akan dirilis bersamaan dengan tag versi & catatan rilis.
 🧬 Struktur Proyek
 
 /
@@ -156,7 +191,21 @@ curl localhost:4301/contract/PiToken
 ├─ docs/                → Language spec & architecture
 └─ out/                 → Compiled WASM + ABI
 
+## 🧭 How This Roadmap Works
 
+Roadmap dibagi menjadi 4 kuartal utama (Q1–Q4), masing-masing fokus pada area pengembangan tertentu:
+
+- **Q1:** fondasi compiler + VM + SDK  
+- **Q2:** keamanan, analisis, dan verifikasi formal  
+- **Q3:** simulasi node, RPC, konsensus, package manager  
+- **Q4:** GUI, modul native, profiler, indexing  
+
+Setiap fitur yang selesai akan:
+1. ditandai melalui GitHub Issue dengan label `completed`  
+2. dimasukkan ke changelog  
+3. dirilis dalam rilis versi resmi (`v0.x`)  
+
+Kontribusi komunitas selalu disambut untuk mempercepat pengembangan NSC Suite.
 ---
 
 📘 Sintaks Bahasa NSC — PiLang
