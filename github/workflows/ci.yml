@@ -1,0 +1,35 @@
+name: PiNSC CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install Python deps
+      run: pip install -r requirements.txt
+
+    - name: Run Python tests
+      run: pytest --maxfail=1 --disable-warnings -q
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "19"
+
+    - name: Install Node deps
+      run: npm install
+
+    - name: Check JS lint
+      run: npm run lint || true
