@@ -1,419 +1,192 @@
-# Native-Smart-Contract-NSC-Pi
 ---
 
-📌 Visi Proyek
+🌐 Pi Native Smart Contract (NSC) — Predictive Development Suite
 
-Menyediakan toolchain end-to-end untuk NSC Pi, meliputi:
+Complete, Advanced, Modular, & Fully Developer-Ready
 
-Bahasa khusus Pi (PiLang) — resource-oriented, modular, aman.
+Selamat datang di Pi NSC Predictive Development Suite, sebuah proyek komprehensif yang memodelkan, memprediksi, dan mensimulasikan bagaimana Native Smart Contract (NSC) Pi Network kemungkinan bekerja—berdasarkan:
 
-Compiler lengkap: PiLang → IR → WASM → Metadata.
+Pola kontrak PiChain V1/V2
 
-PiVM — runtime deterministik untuk menjalankan bytecode.
+Struktur ledger híbrida Pi
 
-SDK JS & Python untuk integrasi dengan aplikasi.
+Model consensus SCP-modified
 
-Contoh kontrak on-chain (Token, NFT, DEX, Lending, DAO).
+Pola desain Resource Oriented ala Move
 
-Test-suite, fuzzer, dan static-analyzer.
+Arsitektur WASM yang diduga digunakan Pi VM
 
-Dokumentasi lengkap dan developer onboarding.
 
+Repository ini menyediakan kompiler, VM, bahasa prediksi (PiLang), contoh kontrak, SDK, pipeline, dan local testnet.
 
 
 ---
 
-🧬 5️⃣ Kompilasi Kontrak
+🏷️ Badges
 
-Contoh untuk kontrak PiToken:
+![Status](https://img.shields.io/badge/status-active-green)
+![Compiler](https://img.shields.io/badge/compiler-WASM-blue)
+![Language](https://img.shields.io/badge/PiLang-resource--oriented-orange)
+![VM](https://img.shields.io/badge/PiVM-sandbox-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-yellow)
+
+
+---
+
+🚀 Quickstart Instalasi
+
+1️⃣ Clone Repository
+
+git clone https://github.com/yourname/pi-nsc-project.git
+cd pi-nsc-project
+
+2️⃣ Instal Dependensi
+
+Python – Compiler & PiVM
+
+pip install -r requirements.txt
+
+NodeJS – SDK & Tools
+
+npm install
+
+
+---
+
+3️⃣ Build Compiler
+
+python compiler/build.py
+
+Output:
+
+build/pilangc        # PiLang Compiler
+build/pilang-ir      # Intermediate Representation Generator
+
+
+---
+
+4️⃣ Compile Kontrak
 
 ./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm
 
 Output:
 
-out/
- ├─ PiToken.wasm   → bytecode siap eksekusi
- └─ PiToken.json   → ABI (Application Binary Interface)
+out/PiToken.wasm
+out/PiToken.json (ABI)
 
 
 ---
 
-💻 6️⃣ Jalankan PiVM Lokal
+5️⃣ Jalankan PiVM
 
-python vm/pivm.py --load out/PiToken.wasm
-
-VM akan menjalankan kontrak secara lokal di sandbox environment.
-
-Kamu bisa menambahkan flag opsional:
-
-python vm/pivm.py --load out/PiToken.wasm --debug --trace
+python vm/pivm.py --load out/PiToken.wasm --debug
 
 
 ---
 
-🧪 7️⃣ Jalankan Test Suite
+6️⃣ Jalankan Test Suite
 
 pytest tests
 
-Atau jalankan semua test secara paralel:
-
-pytest -n auto
-
 
 ---
 
-🔍 8️⃣ Verifikasi Hasil Build
+🧪 Menjalankan Kontrak di PiVM Lokal
 
-Gunakan perintah di bawah untuk memastikan semua file berhasil dibuat dengan benar:
+Deploy module
 
-tree -L 2 build/ out/
+python vm/pivm.py --deploy out/PiToken.wasm
 
-Atau gunakan tools bawaan:
+Panggil fungsi
 
-python tools/check_build.py
+python vm/pivm.py --call PiToken::transfer --args "alice,bob,100"
 
+Trace eksekusi
 
----
+python vm/pivm.py --load out/PiToken.wasm --trace
 
-🧠 9️⃣ Developer Shortcuts
+Akan menampilkan:
 
-Untuk mempercepat workflow, gunakan alias berikut di terminal:
+Instruksi WASM
 
-alias pi-build='python compiler/build.py && ./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm'
-alias pi-run='python vm/pivm.py --load out/PiToken.wasm'
-alias pi-test='pytest tests'
+State perubahan storage
 
-Dengan begitu, kamu hanya perlu menjalankan:
+Event yang dikeluarkan
 
-pi-build && pi-run && pi-test
-
-
----
-
-✅ 10️⃣ TL;DR (Ringkasan Cepat)
-
-git clone https://github.com/yourname/pi-nsc-project.git
-cd pi-nsc-project
-pip install -r requirements.txt
-npm install
-python compiler/build.py
-./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm
-python vm/pivm.py --load out/PiToken.wasm
-pytest tests
-
-📦 Hasil akhir: Kontrak PiToken berhasil dikompilasi, dieksekusi di PiVM, dan seluruh test lulus ✅
-
-
----
-
-Selanjutnya kamu bisa lanjut ke:
-
-📘 docs/getting_started.md untuk belajar struktur kode PiLang.
-
-🧩 contracts/examples/ untuk melihat kontrak lain seperti NFT, DAO, dan DEX.
-
-🧰 tools/ untuk debugging, inspeksi bytecode, dan analisis gas.
-
-
-> 💡 Tip: Jalankan python tools/devmenu.py untuk menggunakan interactive developer console — mode cepat bagi developer untuk kompilasi & deploy kontrak langsung dari terminal.
-
-
-
-1.1 Struktur modul/contract
-
-module MyModule {
-    // resource & types
-    resource TokenBalance {
-        owner: address;
-        amount: u128;
-    }
-
-    // storage declarations
-    storage balances: map<address, TokenBalance>;
-
-    // initializer
-    init() {
-        balances = {};
-    }
-
-    // public entrypoint
-    public fn mint(to: address, amount: u128) {
-        require(tx.sender == admin, "unauthorized");
-        ledger::credit(to, amount);
-        event::emit("Mint", to, amount);
-    }
-}
-
-1.2 Tipe data & deklarasi
-
-u8, u16, u32, u64, u128
-
-bool, string, address
-
-map<K, V>, list<T>
-
-resource Name { ... } — resource tidak boleh disalin; hanya dipindahkan
-
-
-1.3 Function / Entrypoint
-
-public fn transfer(to: address, amount: u128) {
-    let from = tx.sender;
-    ledger::debit(from, amount);
-    ledger::credit(to, amount);
-    event::emit("Transfer", from, to, amount);
-}
-
-1.4 Error handling & require
-
-require(cond, "msg") — revert/abort transaksi
-
-abort("msg") — hentikan eksekusi
-
-
-1.5 Event
-
-event::emit("Purchase", buyer, seller, id, price);
-
-1.6 Storage access
-
-storage name: map<...> global
-
-akses storageName[key]
-
-resource diambil / dikembalikan lewat operasi move semantics
+Gas usage
 
 
 
 ---
 
-2. Contoh Kontrak Lengkap (Prediksi)
+🛠 Deploy ke Testnet Lokal
 
-2.1 Token (native token wrapper)
+Jalankan testnet 3-node
 
-module PiToken {
-    resource Balance { amount: u128 }
-    storage balances: map<address, Balance>
-    storage total_supply: u128
+python tools/localnet.py --nodes 3
 
-    init() { balances = {}; total_supply = 0; }
+Node tersedia pada:
 
-    public fn mint(to: address, amount: u128) {
-        require(tx.sender == token_admin, "unauthorized");
-        ledger::credit(to, amount);
-        total_supply = total_supply + amount;
-        event::emit("Mint", to, amount);
-    }
+localhost:4301
+localhost:4302
+localhost:4303
 
-    public fn transfer(to: address, amount: u128) {
-        let from = tx.sender;
-        ledger::debit(from, amount);
-        ledger::credit(to, amount);
-        event::emit("Transfer", from, to, amount);
-    }
-}
+Deploy kontrak ke node
 
-2.2 NFT (non-fungible resource)
+python tools/deploy.py --node 4301 --wasm out/PiToken.wasm
 
-module PiNFT {
-    resource NFT { id: u64; owner: address; metadata: string }
-    storage nfts: map<u64, NFT>
-    storage next_id: u64
+Cek status kontrak
 
-    init() { nfts = {}; next_id = 1; }
-
-    public fn mint(to: address, metadata: string) -> u64 {
-        let id = next_id;
-        next_id = next_id + 1;
-        nfts[id] = NFT { id: id, owner: to, metadata: metadata };
-        event::emit("MintNFT", id, to);
-        return id;
-    }
-
-    public fn transfer(id: u64, to: address) {
-        let nft = nfts[id];
-        require(nft.owner == tx.sender, "not owner");
-        nft.owner = to;
-        nfts[id] = nft;
-        event::emit("TransferNFT", id, tx.sender, to);
-    }
-}
-
-2.3 Marketplace
-
-module Marketplace {
-    resource Listing { id: u64; seller: address; price: u128; nft_id: u64; active: bool }
-    storage listings: map<u64, Listing>
-    storage next_listing: u64
-
-    init() { listings = {}; next_listing = 1; }
-
-    public fn create_listing(nft_id: u64, price: u128) -> u64 {
-        let id = next_listing; next_listing = next_listing + 1;
-        listings[id] = Listing { id: id, seller: tx.sender, price: price, nft_id: nft_id, active: true };
-        event::emit("Created", id, tx.sender, price);
-        return id;
-    }
-
-    public fn purchase(listing_id: u64) {
-        let l = listings[listing_id];
-        require(l.active, "not active");
-        ledger::debit(tx.sender, l.price);
-        ledger::credit(l.seller, l.price);
-        // transfer NFT ownership (calls PiNFT.transfer) - cross-module call
-        PiNFT::transfer(l.nft_id, tx.sender);
-        l.active = false; listings[listing_id] = l;
-        event::emit("Purchased", listing_id, tx.sender, l.seller);
-    }
-}
-
-2.4 Lending (simplified)
-
-module Lending {
-    resource Loan { id: u64; borrower: address; amount: u128; collateral_nft: u64; due: u64 }
-    storage loans: map<u64, Loan>
-    storage next_loan: u64
-
-    public fn borrow(collateral_nft: u64, amount: u128, duration_secs: u64) -> u64 {
-        // transfer NFT to escrow
-        PiNFT::transfer(collateral_nft, escrow_address);
-        let id = next_loan; next_loan = next_loan + 1;
-        loans[id] = Loan { id: id, borrower: tx.sender, amount: amount, collateral_nft: collateral_nft, due: ledger::timestamp() + duration_secs };
-        ledger::credit(tx.sender, amount);
-        event::emit("Borrow", id, tx.sender, amount);
-        return id;
-    }
-
-    public fn repay(id: u64) {
-        let loan = loans[id];
-        require(loan.borrower == tx.sender, "not borrower");
-        ledger::debit(tx.sender, loan.amount);
-        // return collateral
-        PiNFT::transfer(loan.collateral_nft, tx.sender);
-        delete loans[id];
-        event::emit("Repay", id);
-    }
-}
-
-2.5 DAO governance (simplified)
-
-module DAO {
-    resource Proposal { id: u64; proposer: address; description: string; votes_for: u128; votes_against: u128; open: bool }
-    storage proposals: map<u64, Proposal>
-    storage next_proposal: u64
-
-    public fn propose(description: string) -> u64 {
-        let id = next_proposal; next_proposal = next_proposal + 1;
-        proposals[id] = Proposal { id: id, proposer: tx.sender, description: description, votes_for: 0, votes_against: 0, open: true };
-        event::emit("Proposed", id, tx.sender);
-        return id;
-    }
-
-    public fn vote(id: u64, support: bool, weight: u128) {
-        let p = proposals[id];
-        require(p.open, "closed");
-        if (support) { p.votes_for = p.votes_for + weight; } else { p.votes_against = p.votes_against + weight; }
-        proposals[id] = p;
-    }
-
-    public fn finalize(id: u64) {
-        let p = proposals[id]; require(p.proposer == tx.sender || tx.sender == dao_admin, "unauthorized");
-        p.open = false; proposals[id] = p;
-        event::emit("Finalized", id, p.votes_for, p.votes_against);
-    }
-}
-
-
----
-🏗️ Arsitektur Utama
-
-┌───────────────────────────────────────────────┐
-│                 Application Layer              │
-│  (dApps, Wallets, Marketplaces, Merchant API)  │
-└───────────────────────────────────────────────┘
-                 ▼
-┌───────────────────────────────────────────────┐
-│                Pi SDK (JS / Py)               │
-│      - Contract interaction                   │
-│      - WASM loader                            │
-│      - Signing & transaction builder          │
-└───────────────────────────────────────────────┘
-                 ▼
-┌───────────────────────────────────────────────┐
-│              PiVM (Runtime Engine)            │
-│  - WASM Execution                             │
-│  - Host API (ledger, storage, events)         │
-│  - Deterministic compute                      │
-└───────────────────────────────────────────────┘
-                 ▼
-┌───────────────────────────────────────────────┐
-│                  Smart Contracts              │
-│          (PiToken, NFT, DEX, DAO)             │
-└───────────────────────────────────────────────┘
-                 ▼
-┌───────────────────────────────────────────────┐
-│                   Blockchain Layer            │
-│      - Nodes, Consensus, Ledger State         │
-└───────────────────────────────────────────────┘
+curl localhost:4301/contract/PiToken
 
 
 ---
 
-🔧 Struktur Repo
+🧬 Struktur Proyek
 
 /
-├─ compiler/            → Parser, AST, Type Checker, IR, WASM Backend
+├─ compiler/            → Parser, AST, IR, WASM backend
 ├─ vm/                  → PiVM runtime
-├─ contracts/           → Sample contracts (Token, NFT, DAO, DEX)
-├─ sdk-js/              → Javascript SDK
+├─ contracts/           → Token, DEX, DAO, Lending, NFT
+├─ sdk-js/              → JavaScript SDK
 ├─ sdk-py/              → Python SDK
-├─ tests/               → Unit, integration, fuzz testing
-├─ tools/               → Auditor, bytecode inspector, runtime debugger
-├─ explorer/            → Mini block explorer for local testnet
-├─ docs/                → Language spec, tutorials, API reference
-└─ ROADMAP.md           → Roadmap resmi proyek
+├─ tools/               → Debugger, deployer, localnet
+├─ tests/               → Unit, integration, fuzzing
+├─ docs/                → Language spec & architecture
+└─ out/                 → Compiled WASM + ABI
 
 
 ---
 
-🧬 Bahasa NSC: PiLang (Prediksi)
+📘 Sintaks Bahasa NSC — PiLang
 
-PiLang merupakan bahasa kontrak pintar prediktif untuk Pi Network. Karakteristik:
+PiLang adalah bahasa smart contract prediktif untuk Pi Native Smart Contract.
 
-Resource-Oriented (anti-duplicasi seperti Move)
+Fitur:
+
+Resource-Oriented (Move-like)
+
+Safety-first borrow model
+
+No global mutable state
 
 Event-driven
 
-Module-based
-
-WASM-compiled
-
-Deterministic execution
+Deterministic WASM output
 
 
-Contoh Sintaks PiLang (Token)
+Contoh fungsi transfer
 
-module PiToken {
+public transfer(from: address, to: address, value: u64) {
+  let b_from = ledger::borrow<Balance>(from);
+  let b_to   = ledger::borrow<Balance>(to);
 
-  resource Balance {
-    amount: u64
-  }
+  assert(b_from.amount >= value, "Insufficient");
 
-  public init(owner: address, supply: u64) {
-    ledger::create_resource(owner, Balance { amount: supply });
-  }
+  b_from.amount -= value;
+  b_to.amount   += value;
 
-  public transfer(from: address, to: address, value: u64) {
-    let b_from = ledger::borrow<Balance>(from);
-    let b_to   = ledger::borrow<Balance>(to);
-
-    assert(b_from.amount >= value, "Insufficient balance");
-
-    b_from.amount -= value;
-    b_to.amount   += value;
-
-    event::emit("Transfer", from, to, value);
-  }
+  event::emit("Transfer", from, to, value);
 }
 
 
@@ -421,254 +194,165 @@ module PiToken {
 
 ⚙️ Compiler Pipeline
 
-Pipeline compiler:
-
 PiLang (.pi)
-    ▼
-Parser → AST
-    ▼
-Type Checker + Resource Checker
-    ▼
-IR (Pi-IR)
-    ▼
+    ↓
+Parser → AST → Resource Checker → Type Checker
+    ↓
+Pi-IR (Intermediate Representation)
+    ↓
 WASM Generator
-    ▼
+    ↓
 module.wasm + metadata.json
 
-Fitur utama:
-
-Deterministic compilation
-
-Bytecode hashing untuk governance & upgrade
-
-ABI generation untuk SDK
-
-
 
 ---
 
-🖥️ PiVM — Virtual Machine
+🖥 PiVM — Virtual Machine
 
-PiVM adalah runtime yang mengeksekusi WASM dengan host API:
+Fitur PiVM:
+
+WASM sandbox engine
+
+Deterministic compute model
+
+Snapshot & rollback
+
+Gas metering
+
+Secure host API
+
+
+Host API:
 
 ledger::read / write
-
-events::emit
-
-storage::set / get
-
+storage::read / write
+event::emit
 auth::verify
-
-crypto hashing
-
-timestamp
-
-
-Fitur keamanan:
-
-Sandboxed WASM
-
-Gas/compute model
-
-Deterministic execution
-
-State isolation
-
+crypto::hash
 
 
 ---
 
-🧪 Test Suite
+🧪 Testing & Fuzzing
 
-Test-suite lengkap mencakup:
+Menjalankan semua test:
 
-Unit test untuk compiler & VM
+pytest -n auto
 
-Integration test untuk contoh kontrak
+Fuzz kontrak:
 
-Fuzzer (mutasi input → cari crash)
-
-Static Analyzer (pi-audit)
-
-
-Contoh test:
-
-assert_exec("transfer", args=[alice, bob, 100])
-assert_balance(bob) == 100
+python tools/fuzzer.py contracts/PiDEX.pi
 
 
 ---
 
-🛠️ SDK Integration
+🛠 Integrasi SDK
 
 JavaScript
 
-Mendukung:
+import { PiContract } from "../sdk-js";
 
-Load WASM
-
-Generate transaction
-
-Sign with Pi Wallet
-
-Submit to local/testnet node
-
+const token = new PiContract("out/PiToken.wasm");
+await token.load();
+await token.call("transfer", [alice, bob, 50]);
 
 Python
 
-Cocok untuk backend & automation:
+from sdk_py import PiContract
 
-Contract call helpers
+c = PiContract("out/PiToken.wasm")
+c.load()
+c.call("transfer", ["alice", "bob", 50])
 
-WASM inspector
 
-Test runner
+---
+
+🧭 Workflow Developer Lengkap
+
+1. Tulis kontrak di contracts/
+
+
+2. Compile → WASM
+
+
+3. Jalankan di PiVM
+
+
+4. Unit testing
+
+
+5. Fuzzing & audit
+
+
+6. Debug dengan --trace
+
+
+7. Integrasi via SDK
+
+
+8. Deploy ke testnet lokal
+
 
 
 
 ---
 
-🏛️ Governance & Module Lifecycle
+🏛 Governance Model Prediktif
 
-Model governance prediktif:
+Developer submit module
 
-1. Developer submit module (signed).
+Node menjalankan sandbox test
 
+Komunitas voting (DAO-like)
 
-2. Nodes menjalankan verifikasi & sandbox test.
-
-
-3. DAO vote untuk registrasi module.
-
-
-4. Deployment ke mainnet staging.
-
-
-5. Final activation.
-
+Aktivasi kontrak on-chain
 
 
 
 ---
 
-🚀 Contoh Kontrak Produksi
+🔐 Best Practices & Keamanan
 
-Repositori ini menyediakan contoh lengkap:
+Hindari global mutable state
 
-PiToken — token standar
+Pakai borrow-pattern resource
 
-PiNFT — non-fungible token
+Gunakan safe-u64
 
-PiDEX — decentralized exchange
+No recursion
 
-PiLend — lending/borrowing
-
-PiDAO — governance
-
-Marketplace — escrow & orderbook
-
-
-Setiap kontrak memiliki:
-
-Sumber .pi
-
-WASM compile output
-
-metadata.json (ABI)
-
-Unit test
-
-Integration test
+Emit event untuk trace
 
 
 
 ---
 
-📡 Node & Consensus (Analisis Prediktif)
+🗺 Roadmap
 
-Pi Network tampaknya menggunakan:
+WASM backend optimization
 
-Federated consensus mirip Stellar
+PiVM JIT improvements
 
-Constraint Ledger (ALGO-like) untuk validasi state
+SDK v2
 
-Deterministic transaction ordering
+Testnet cluster v2
 
-Node sandbox untuk smart contract
+GUI Debugger
 
-
-Kontrak tidak dijalankan oleh validator penuh → PiVM terpisah sebagai layer execution.
-
-
----
-
-🧭 Roadmap
-
-Daftar lengkap roadmap ada di file: ROADMAP.md
-
-Highlight:
-
-✔ Bahasa v1 draft
-
-✔ Compiler front-end
-
-☐ PiVM runtime
-
-☐ WASM backend
-
-☐ SDK JS & Python
-
-☐ Contoh kontrak produksi
-
-☐ Testnet local cluster
-
-☐ Auditor tool
-
-☐ Mainnet-ready release
-
-
-
----
-
-🤝 Kontribusi
-
-Kami mendorong kontribusi komunitas:
-
-Tambah kontrak baru
-
-Audit code
-
-Perbaiki compiler
-
-Buat tutorial
-
-Tambahkan test
-
-
-
----
-
-🔐 Status Keamanan
-
-⚠ Semua komponen masih dalam tahap prediktif dan tidak aman untuk digunakan di jaringan produksi.
 
 
 ---
 
 📄 Lisensi
 
-MIT License — bebas digunakan, diubah, dan dikembangkan oleh komunitas.
+MIT License
 
 
 ---
 
-💬 Kontak & Dukungan
+📬 Kontak
 
-Untuk diskusi, ide, atau kolaborasi:
-
-Issues (GitHub)
-
-Diskusi komunitas Pi
+Diskusi & kolaborasi dapat dilakukan melalui GitHub Issues.
 
 
-
+---
