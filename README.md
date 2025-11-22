@@ -218,4 +218,37 @@ c.load()
 c.call("transfer", ["alice", "bob", 50])
 
 
----
+📡 Development Status Overview
+
+🔨 Core Systems
+
+Stabilitas compiler & VM
+
+Deterministik WASM output
+
+Borrow checker improvement
+
+
+🔐 Security
+
+Static analyzer v1
+
+Formal spec system
+
+
+🧰 Developer Tools
+
+Debugger CLI
+
+Testnet 3-node
+
+Fuzz engine v2
+
+
+🌐 Ecosystem
+
+RPC API (call, submit_tx, events)
+
+Package Manager (pipm)
+
+Event indexer prototipe
