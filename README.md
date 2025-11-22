@@ -20,33 +20,102 @@ Test-suite, fuzzer, dan static-analyzer.
 Dokumentasi lengkap dan developer onboarding.
 
 
-Proyek ini bertujuan menjadi fondasi komunitas ketika Pi Network merilis spesifikasi resmi smart contract.
 
 ---
 
-Ringkasan singkat
+🧬 5️⃣ Kompilasi Kontrak
 
-Tipe bahasa: WASM-based DSL / Resource-oriented DSL (mirip Move + Soroban)
+Contoh untuk kontrak PiToken:
 
-Address format: pi:<bech32-like> atau account:xxxx (bukan 0x)
+./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm
 
-Tipe numerik: u64, u128 untuk token/amount
+Output:
 
-Model akuntansi: resource-safe (resource tidak bisa disalin), storage terstruktur (map/list)
-
-Transaksi: tx.sender, tx.amount, tx.nonce, ledger::timestamp()
-
-Eksekusi: tidak memakai gas tradisional; memakai execution budget / compute units
-
-Keamanan: require/abort, no reentrancy by design, integer overflow safe
-
+out/
+ ├─ PiToken.wasm   → bytecode siap eksekusi
+ └─ PiToken.json   → ABI (Application Binary Interface)
 
 
 ---
 
-1. Prediksi Sintaks Bahasa NSC Pi (Spesimen)
+💻 6️⃣ Jalankan PiVM Lokal
 
-> Catatan: sintaks ini bersifat prediktif; gunakan untuk eksperimen pseudocode dan desain kontrak.
+python vm/pivm.py --load out/PiToken.wasm
+
+VM akan menjalankan kontrak secara lokal di sandbox environment.
+
+Kamu bisa menambahkan flag opsional:
+
+python vm/pivm.py --load out/PiToken.wasm --debug --trace
+
+
+---
+
+🧪 7️⃣ Jalankan Test Suite
+
+pytest tests
+
+Atau jalankan semua test secara paralel:
+
+pytest -n auto
+
+
+---
+
+🔍 8️⃣ Verifikasi Hasil Build
+
+Gunakan perintah di bawah untuk memastikan semua file berhasil dibuat dengan benar:
+
+tree -L 2 build/ out/
+
+Atau gunakan tools bawaan:
+
+python tools/check_build.py
+
+
+---
+
+🧠 9️⃣ Developer Shortcuts
+
+Untuk mempercepat workflow, gunakan alias berikut di terminal:
+
+alias pi-build='python compiler/build.py && ./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm'
+alias pi-run='python vm/pivm.py --load out/PiToken.wasm'
+alias pi-test='pytest tests'
+
+Dengan begitu, kamu hanya perlu menjalankan:
+
+pi-build && pi-run && pi-test
+
+
+---
+
+✅ 10️⃣ TL;DR (Ringkasan Cepat)
+
+git clone https://github.com/yourname/pi-nsc-project.git
+cd pi-nsc-project
+pip install -r requirements.txt
+npm install
+python compiler/build.py
+./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm
+python vm/pivm.py --load out/PiToken.wasm
+pytest tests
+
+📦 Hasil akhir: Kontrak PiToken berhasil dikompilasi, dieksekusi di PiVM, dan seluruh test lulus ✅
+
+
+---
+
+Selanjutnya kamu bisa lanjut ke:
+
+📘 docs/getting_started.md untuk belajar struktur kode PiLang.
+
+🧩 contracts/examples/ untuk melihat kontrak lain seperti NFT, DAO, dan DEX.
+
+🧰 tools/ untuk debugging, inspeksi bytecode, dan analisis gas.
+
+
+> 💡 Tip: Jalankan python tools/devmenu.py untuk menggunakan interactive developer console — mode cepat bagi developer untuk kompilasi & deploy kontrak langsung dari terminal.
 
 
 
