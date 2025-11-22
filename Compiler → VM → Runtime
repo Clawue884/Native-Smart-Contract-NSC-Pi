@@ -1,0 +1,10 @@
+graph TD;
+    A[Source Code] --> B[Compiler Front-End];
+    B --> C[AST (Abstract Syntax Tree)];
+    C --> D[Compiler Middle-End (Optimization)];
+    D --> E[IR (Intermediate Representation)];
+    E --> F[Compiler Back-End];
+    F --> G[Bytecode / Machine Code];
+    G --> H[Virtual Machine];
+    H --> I[Runtime Environment];
+    I --> J[Execution (Memory Mgmt, IO, Syscalls)];
