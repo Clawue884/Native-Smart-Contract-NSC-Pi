@@ -1,107 +1,50 @@
+
+<!-- Banner -->
 <p align="center">
   <img src="./assets/banner.png" alt="Pi NSC Banner" width="100%" />
 </p>
----
 
-# Pi Native Smart Contract (NSC) — Predictive Development Suit
-
----
-
-![Roadmap](https://img.shields.io/badge/Roadmap-Active-brightgreen?style=for-the-badge)
-![Status](https://img.shields.io/badge/Development-In%20Progress-blue?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-0.1.0-orange?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge)
+<h1 align="center">🌐 Pi Native Smart Contract (NSC) — Predictive Development Suite</h1>
+<p align="center">Modular • Advanced • Developer-Ready • Fully Predictive</p>
 
 ---
 
-# 🌐 Overview
+## 🚀 Deskripsi
 
-**Pi Native Smart Contract (NSC) Predictive Development Suite** adalah proyek komprehensif yang memodelkan, memprediksi, dan mensimulasikan bagaimana *Native Smart Contract* pada Pi Network kemungkinan bekerja — berdasarkan:
+Pi NSC Predictive Development Suite adalah kerangka kerja komprehensif untuk memodelkan, memprediksi, dan mensimulasikan bagaimana Native Smart Contract (NSC) Pi Network kemungkinan bekerja.
+
+Toolkit ini dibangun berdasarkan:
 
 - Pola kontrak PiChain V1/V2  
 - Struktur ledger hybrid Pi  
-- Model konsensus SCP (modified)  
-- Pola desain resource-oriented ala Move  
-- Arsitektur WASM yang diduga digunakan Pi VM  
+- Konsensus modifikasi SCP  
+- Resource-Oriented Programming (Move-like)  
+- Backend WASM untuk PiVM  
 
-Suite ini mencakup:
-
-- 🔧 Compiler & Intermediate Representation  
-- 🔥 PiVM (Virtual Machine)  
-- 📘 PiLang (predictive smart contract language)  
-- 🧰 Debugger, Local Testnet, Tools  
-- 🧪 Fuzzing, testing, audit  
-- 🔗 SDK (JS & Python)  
-
-Tujuannya: menyediakan lingkungan developer **lengkap, aman, modular, dan prediktif** untuk ekosistem Pi.
+Suite ini menyediakan:
+Compiler, VM, Bahasa PiLang, SDK, Debugger, Local Testnet, Fuzzing Engine, dan contoh kontrak lengkap.
 
 ---
 
-# 🌌 Project Vision
-
-Proyek ini dibangun untuk menjadi toolchain open-source yang memungkinkan developer:
-
-- Menulis dan menguji smart contract berbasis resource-oriented.
-- Menjalankan WASM contract secara deterministik melalui PiVM.
-- Melakukan audit, fuzzing, dan formal verification.
-- Mendapat gambaran yang lebih pasti tentang kemungkinan desain Pi Native Smart Contract.
-- Mengembangkan ekosistem aplikasi Pi secara lebih terstruktur sebelum Open Mainnet.
-
-Ini bukan "tiruan", tetapi **model prediktif realistis** berdasarkan arsitektur teknis Pi Network yang terkonfirmasi publik.
+## 🏷️ Badge
+*(Tambahkan badge sesuai kebutuhan proyek)*
 
 ---
 
-# 🧠 Core Features
+## 🚀 Instalasi & Quickstart
 
-### 🔹 PiLang (Smart Contract Language)
-- Resource-oriented (inspirasi Move)
-- Safety-first borrow model
-- Deterministic output (WASM)
-- No global mutable state
-- Event-driven model
-
-### 🔹 Compiler
-- Parser → AST → IR → WASM backend  
-- Resource checker  
-- Type checker  
-- Deterministic WASM generator  
-
-### 🔹 PiVM
-- WASM sandbox engine  
-- Gas metering  
-- Snapshot & rollback  
-- Secure host API  
-- Debug trace  
-- Ledger storage backend  
-
-### 🔹 SDK
-- `sdk-js` untuk aplikasi web & NodeJS  
-- `sdk-py` untuk backend, tools, automation  
-
-### 🔹 Tools
-- Testnet 3-node  
-- Debugger  
-- Fuzzer  
-- Local deployer  
-- RPC simulator  
-
----
-
-# 🚀 Quickstart
-
-## 1️⃣ Clone Repository
-
-```bash
+### 1️⃣ Clone Repository
+```sh
 git clone https://github.com/yourname/pi-nsc-project.git
 cd pi-nsc-project
 
-2️⃣ Instal Dependencies
+2️⃣ Instal Dependensi
 
-Python (Compiler & PiVM):
+Python
 
 pip install -r requirements.txt
 
-NodeJS (SDK & Tools):
+NodeJS
 
 npm install
 
@@ -111,10 +54,12 @@ python compiler/build.py
 
 Output:
 
-build/pilangc
-build/pilang-ir
+build/pilangc — PiLang Compiler
 
-4️⃣ Compile Contract
+build/pilang-ir — IR Generator
+
+
+4️⃣ Compile Kontrak
 
 ./build/pilangc contracts/PiToken.pi -o out/PiToken.wasm
 
@@ -122,14 +67,71 @@ build/pilang-ir
 
 python vm/pivm.py --load out/PiToken.wasm --debug
 
-6️⃣ Testing
+6️⃣ Jalankan Test Suite
 
 pytest tests
 
 
 ---
 
-📘 Contoh Sintaks PiLang
+🧪 Menjalankan Kontrak di PiVM Lokal
+
+Deploy
+
+python vm/pivm.py --deploy out/PiToken.wasm
+
+Call
+
+python vm/pivm.py --call PiToken::transfer --args "alice,bob,100"
+
+Trace
+
+python vm/pivm.py --load out/PiToken.wasm --trace
+
+
+---
+
+🛠 Deploy ke Local Testnet
+
+Menjalankan 3 node
+
+python tools/localnet.py --nodes 3
+
+Node:
+
+localhost:4301
+
+localhost:4302
+
+localhost:4303
+
+
+Deploy kontrak
+
+python tools/deploy.py --node 4301 --wasm out/PiToken.wasm
+
+
+---
+
+🧬 Struktur Proyek
+
+/
+├─ compiler/      # Parser, AST, IR, WASM backend
+├─ vm/            # PiVM runtime
+├─ contracts/     # Token, DEX, DAO, Lending, NFT
+├─ sdk-js/        # JavaScript SDK
+├─ sdk-py/        # Python SDK
+├─ tools/         # Debugger, deployer, localnet
+├─ tests/         # Unit, integration, fuzzing
+├─ docs/          # Spec & architecture
+└─ out/           # WASM output + ABI
+
+
+---
+
+📘 PiLang — Bahasa Smart Contract
+
+Contoh fungsi transfer:
 
 public transfer(from: address, to: address, value: u64) {
     let b_from = ledger::borrow(from);
@@ -146,168 +148,71 @@ public transfer(from: address, to: address, value: u64) {
 
 ---
 
-🧬 Project Structure
+⚙️ Compiler Pipeline
 
-/
-├─ compiler/          → Parser, AST, IR, WASM backend
-├─ vm/                → PiVM runtime
-├─ contracts/         → Token, DEX, DAO, Lending, NFT
-├─ sdk-js/            → JavaScript SDK
-├─ sdk-py/            → Python SDK
-├─ tools/             → Debugger, deployer, localnet
-├─ tests/             → Unit, integration, fuzzing
-├─ docs/              → Language spec, architecture
-└─ out/               → Compiled WASM + ABI
+PiLang (.pi)
+ ↓ Parser
+ ↓ AST
+ ↓ Resource Checker
+ ↓ Type Checker
+ ↓ Pi-IR
+ ↓ WASM Generator
+ → Output: module.wasm + metadata.json
 
 
 ---
 
-🧭 Developer Workflow
+🖥 PiVM — Virtual Machine
 
-1. Tulis kontrak di contracts/
+Fitur:
 
+WASM Sandbox
 
-2. Compile → WASM
+Deterministic Execution
 
+Gas Metering
 
-3. Jalankan di PiVM
+State Snapshot & Rollback
 
-
-4. Unit testing
-
-
-5. Fuzzing & audit
+Secure Host API
 
 
-6. Debug dengan --trace
+Host API:
 
-
-7. Integrasi via SDK
-
-
-8. Deploy ke testnet lokal
-
-
+ledger::read, write
+storage::read, write
+event::emit
+auth::verify
+crypto::hash
 
 
 ---
 
-📡 Development Status Overview
+🧪 Testing & Fuzzing
 
-🔨 Core Systems
-
-Stabilitas compiler & VM
-
-Deterministik WASM output
-
-Borrow checker improvement
-
-
-🔐 Security
-
-Static analyzer v1
-
-Formal spec system
-
-
-🧰 Developer Tools
-
-Debugger CLI
-
-Testnet 3-node
-
-Fuzz engine v2
-
-
-🌐 Ecosystem
-
-RPC API (call, submit_tx, events)
-
-Package Manager (pipm)
-
-Event indexer prototipe
-
+pytest -n auto
+python tools/fuzzer.py contracts/PiDEX.pi
 
 
 ---
 
-🗺️ Official Roadmap
+🛠 Integrasi SDK
 
-📌 Q1 — Foundation Expansion
+JavaScript
 
-Optimasi WASM
+import { PiContract } from "../sdk-js";
 
-Incremental compilation
+const token = new PiContract("out/PiToken.wasm");
+await token.load();
+await token.call("transfer", [alice, bob, 50]);
 
-PiLang linter
+Python
 
-Snapshot & rollback v2
+from sdk_py import PiContract
 
-SDK JS & Python stabil
+c = PiContract("out/PiToken.wasm")
+c.load()
+c.call("transfer", ["alice", "bob", 50])
 
-
-📌 Q2 — Security & Verification
-
-Static analyzer
-
-Symbolic execution engine
-
-Formal spec
-
-SMT storage
-
-Storage versioning
-
-
-📌 Q3 — Network Simulation
-
-RPC server lengkap
-
-Mempool simulator
-
-Simulasi SCP-modified
-
-pipm package manager
-
-
-📌 Q4 — Enterprise + GUI
-
-Playground IDE
-
-PiVM Trace Visualizer
-
-State Explorer GUI
-
-Native modules (crypto, oracle, randomness, multisig)
-
-Event Indexer v1
-
-
-🌌 Long-Term Vision
-
-PiVM JIT
-
-Distributed testnet (10+ node)
-
-WASM AOT compiler
-
-PiLang 2.0
-
-Integrasi Open Mainnet (ketika API resmi tersedia)
-
-
-
----
-
-📦 License
-
-MIT License
-
-
----
-
-📬 Contact & Collaboration
-
-Diskusi dan kolaborasi melalui GitHub Issues.
 
 ---
