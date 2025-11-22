@@ -26,10 +26,13 @@ Compiler, VM, Bahasa PiLang, SDK, Debugger, Local Testnet, Fuzzing Engine, dan c
 
 ---
 
-## 🏷️ Badge
-*(Tambahkan badge sesuai kebutuhan proyek)*
+![Roadmap](https://img.shields.io/badge/Roadmap-Active-brightgreen?style=for-the-badge)
+![Status](https://img.shields.io/badge/Development-In%20Progress-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-0.1.0-orange?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge)
 
 ---
+
 
 ## 🚀 Instalasi & Quickstart
 
