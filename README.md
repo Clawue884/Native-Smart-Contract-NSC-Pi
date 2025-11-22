@@ -1,13 +1,6 @@
 
 ---
 
-✅ README FINAL — Pi Native Smart Contract (NSC) Predictive Development Suite
-
-(Versi penuh, profesional, siap paste ke GitHub)
-
-
----
-
 # Pi Native Smart Contract (NSC) — Predictive Development Suite
 
 ![Banner](./docs/banner.png)
