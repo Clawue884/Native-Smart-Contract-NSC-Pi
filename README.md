@@ -1,4 +1,6 @@
-
+<p align="center">
+  <img src="./assets/banner.png" alt="Pi NSC Banner" width="100%" />
+</p>
 ---
 
 # Pi Native Smart Contract (NSC) — Predictive Development Suite
