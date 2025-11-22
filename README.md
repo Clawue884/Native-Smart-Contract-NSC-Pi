@@ -3,9 +3,7 @@
 </p>
 ---
 
-# Pi Native Smart Contract (NSC) — Predictive Development Suite
-
-![Banner](./docs/banner.png)
+# Pi Native Smart Contract (NSC) — Predictive Development Suit
 
 ---
 
