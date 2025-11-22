@@ -1,3 +1,4 @@
+------
 ---
 
 🌐 Pi Native Smart Contract (NSC) — Predictive Development Suite
