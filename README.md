@@ -1,6 +1,26 @@
 # Native-Smart-Contract-NSC-Pi
-Dokumen ini merupakan rekonstruksi teknis dan prediksi komprehensif untuk Native Smart Contract (NSC) Pi Network berdasarkan pola SC V1/V2 Testnet, arsitektur Pi (FBA), dan praktik desain bahasa kontrak modern (Move, Soroban, WASM-DSL). Ini bukan dokumentasi resmi Core Team — melainkan hasil analisis, asumsi teknis yang konsisten, dan contoh implementasi hipotetis untuk tujuan studi, pengujian, dan persiapan developer.
+---
 
+📌 Visi Proyek
+
+Menyediakan toolchain end-to-end untuk NSC Pi, meliputi:
+
+Bahasa khusus Pi (PiLang) — resource-oriented, modular, aman.
+
+Compiler lengkap: PiLang → IR → WASM → Metadata.
+
+PiVM — runtime deterministik untuk menjalankan bytecode.
+
+SDK JS & Python untuk integrasi dengan aplikasi.
+
+Contoh kontrak on-chain (Token, NFT, DEX, Lending, DAO).
+
+Test-suite, fuzzer, dan static-analyzer.
+
+Dokumentasi lengkap dan developer onboarding.
+
+
+Proyek ini bertujuan menjadi fondasi komunitas ketika Pi Network merilis spesifikasi resmi smart contract.
 
 ---
 
@@ -236,306 +256,350 @@ module DAO {
 
 
 ---
+🏗️ Arsitektur Utama
 
-3. Struktur Proyek & Tooling (Prediksi)
-
-pi-nsc-project/
-├─ contracts/                # source contracts (.pi or .nsc)
-│  ├─ PiToken.pi
-│  ├─ PiNFT.pi
-│  └─ Marketplace.pi
-├─ scripts/
-│  ├─ deploy.js             # deployment scripts (CLI wrappers)
-├─ tests/
-│  ├─ token_tests.py
-│  └─ marketplace_tests.py
-├─ build/
-│  └─ artifacts/            # compiled wasm, abi, metadata
-├─ compiler/                # reference compiler front-end (optional)
-│  └─ pi-compiler
-├─ vm/                      # local VM runner for testing
-├─ cli/                     # pi-cli tool
-└─ README.md
-
-3.1 Format file sumber
-
-ekstensi .pi atau .nsc
-
-compiler meng-output: module.wasm + metadata.json (ABI-like)
-
-
-3.2 Artifacts
-
-module.wasm — WASM binary
-
-metadata.json — fungsi public, types, events
-
-bytecode_hash — fingerprint
-
+┌───────────────────────────────────────────────┐
+│                 Application Layer              │
+│  (dApps, Wallets, Marketplaces, Merchant API)  │
+└───────────────────────────────────────────────┘
+                 ▼
+┌───────────────────────────────────────────────┐
+│                Pi SDK (JS / Py)               │
+│      - Contract interaction                   │
+│      - WASM loader                            │
+│      - Signing & transaction builder          │
+└───────────────────────────────────────────────┘
+                 ▼
+┌───────────────────────────────────────────────┐
+│              PiVM (Runtime Engine)            │
+│  - WASM Execution                             │
+│  - Host API (ledger, storage, events)         │
+│  - Deterministic compute                      │
+└───────────────────────────────────────────────┘
+                 ▼
+┌───────────────────────────────────────────────┐
+│                  Smart Contracts              │
+│          (PiToken, NFT, DEX, DAO)             │
+└───────────────────────────────────────────────┘
+                 ▼
+┌───────────────────────────────────────────────┐
+│                   Blockchain Layer            │
+│      - Nodes, Consensus, Ledger State         │
+└───────────────────────────────────────────────┘
 
 
 ---
 
-4. Compiler & Toolchain (Prediksi)
+🔧 Struktur Repo
 
-4.1 Arsitektur compiler
-
-Front-end: parser -> AST -> type checker (resource checks, lifetime)
-
-Middle: borrow checker/resource analyzer -> IR
-
-Back-end: IR -> WASM (target WASM 1.0 with constrained imports)
-
-Optimizer: remove dead code, gas/compute budget estimation
-
-Metadata generator: function signatures, event schemas
-
-
-4.2 Fitur compiler
-
-Static analysis: deteksi resource leak, ownership violations
-
-Security checks: integer overflow, uninitialized storage
-
-Deterministic output for bytecode verification
-
-
-4.3 CLI
-
-pi-compile contract.pi -o build/module.wasm --metadata build/metadata.json
-
-pi-deploy build/module.wasm --network testnet --from <account>
-
-pi-call <module> <fn> --args ...
-
+/
+├─ compiler/            → Parser, AST, Type Checker, IR, WASM Backend
+├─ vm/                  → PiVM runtime
+├─ contracts/           → Sample contracts (Token, NFT, DAO, DEX)
+├─ sdk-js/              → Javascript SDK
+├─ sdk-py/              → Python SDK
+├─ tests/               → Unit, integration, fuzz testing
+├─ tools/               → Auditor, bytecode inspector, runtime debugger
+├─ explorer/            → Mini block explorer for local testnet
+├─ docs/                → Language spec, tutorials, API reference
+└─ ROADMAP.md           → Roadmap resmi proyek
 
 
 ---
 
-5. Virtual Machine (VM) Design — Runtime Pi NSC (Prediksi)
+🧬 Bahasa NSC: PiLang (Prediksi)
 
-5.1 Tujuan VM
+PiLang merupakan bahasa kontrak pintar prediktif untuk Pi Network. Karakteristik:
 
-Eksekusi WASM-secure module
+Resource-Oriented (anti-duplicasi seperti Move)
 
-Enforcement resource semantics
+Event-driven
 
-Deterministic state transition
+Module-based
 
-Compute budgeting (no gas market but limit per txn/block)
+WASM-compiled
 
+Deterministic execution
 
-5.2 Komponen VM
 
-Loader: verifikasi signature & fingerprint
+Contoh Sintaks PiLang (Token)
 
-Sandbox: pembatasan akses host (ledger, event, cross-module)
+module PiToken {
 
-Resource Manager: track ownership & movement
+  resource Balance {
+    amount: u64
+  }
 
-Budget Meter: hitung compute units dan hentikan jika melebihi
+  public init(owner: address, supply: u64) {
+    ledger::create_resource(owner, Balance { amount: supply });
+  }
 
-Host functions: ledger::debit, ledger::credit, event::emit, storage::read, storage::write, timestamp
+  public transfer(from: address, to: address, value: u64) {
+    let b_from = ledger::borrow<Balance>(from);
+    let b_to   = ledger::borrow<Balance>(to);
 
+    assert(b_from.amount >= value, "Insufficient balance");
 
-5.3 Security model
+    b_from.amount -= value;
+    b_to.amount   += value;
 
-Memory safety via WASM
-
-No arbitrary syscalls; hanya host APIs
-
-Isolation antar module
-
-Deterministic floating point banned (gunakan integer/math)
-
-
-
----
-
-6. Deployment, Upgrade & Governance
-
-6.1 Deployment flow (prediksi)
-
-1. Dev compile -> produce module.wasm + metadata
-
-
-2. Developer propose module to testnet deployment contract (signed tx)
-
-
-3. Validators verify signature, deterministic bytecode
-
-
-4. Module registered with module_id di ledger
-
-
-5. Governance vote (untuk mainnet release)
-
-
-
-6.2 Upgrade pattern
-
-Immutable modules: versi tertentu immutable
-
-Proxy pattern: module registry menunjuk ke implementasi (mirip upgradeable pattern) — tapi gunakan governance untuk update
-
-Migration tool: state migrator untuk memindahkan storage ke versi baru
-
-
-
----
-
- Security Best Practices (untuk developer)
-
-Gunakan require() untuk validasi input
-
-Hindari logika yang bergantung pada timestamp untuk ekonomi sensitif
-
-Audit cross-module calls untuk race conditions
-
-Batasi akses storage private dengan modifier only_admin (pattern)
-
-Gunakan testnet dan fuzzer (randomized testing)
-
-
-
----
-
- Testing & CI
-
-Unit test via local VM runner (pi-vm run --module build/module.wasm --test ...)
-
-Integration test dengan multiple node testnet cluster
-
-Fuzzing untuk fungsi kritikal (transfer, mint, escrow)
-
-Formal verification pada algoritma ekonomi (opsional)
-
-
-
----
-
-9. Contoh Workflow Developer (singkat)
-
-1. Tulis MyContract.pi
-
-
-2. pi-compile MyContract.pi -o build/ -> artifacts
-
-
-3. pi-testnet-deploy build/module.wasm --from <account>
-
-
-4. Run test: pi-cli call MyContract::create --args ...
-
-
-5. Submit governance proposal untuk mainnet release
-
-
-
-
----
-
-10. Migration & Interoperability
-
-Jembatan ke EVM via light-client / relayer (optional)
-
-Oracles harus diadaptasi (off-chain aggregator yang feed ke on-chain host API)
-
-
-
----
-Prediksi ABI / Metadata JSON (contoh)
-
-{
-  "module": "PiMarket",
-  "functions": [
-    {"name":"create_listing","args":[{"name":"nft_id","type":"u64"},{"name":"price","type":"u128"}],"returns":"u64"}
-  ],
-  "events": ["Created","Purchased"]
+    event::emit("Transfer", from, to, value);
+  }
 }
 
 
 ---
 
- Contoh Alat Pendukung (ecosystem)
+⚙️ Compiler Pipeline
 
-pi-explorer — untuk melihat module registration, tx
+Pipeline compiler:
 
-pi-wallet-cli — sign & send tx
+PiLang (.pi)
+    ▼
+Parser → AST
+    ▼
+Type Checker + Resource Checker
+    ▼
+IR (Pi-IR)
+    ▼
+WASM Generator
+    ▼
+module.wasm + metadata.json
 
-pi-sdk-js / pi-sdk-py — integrasi aplikasi
+Fitur utama:
 
-pi-audit — static security analyzer
+Deterministic compilation
+
+Bytecode hashing untuk governance & upgrade
+
+ABI generation untuk SDK
 
 
 
 ---
 
- FAQ singkat
+🖥️ PiVM — Virtual Machine
 
-Q: Apakah ini resmi? A: Tidak. Ini prediksi teknis.
+PiVM adalah runtime yang mengeksekusi WASM dengan host API:
 
-Q: Kenapa WASM? A: Portabilitas, keamanan memory, dan ekosistem tooling.
+ledger::read / write
 
-Q: Bagaimana memastikan kontrak asli? A: Lihat repo resmi, release tag, explorer, dan governance notice dari PCT.
+events::emit
+
+storage::set / get
+
+auth::verify
+
+crypto hashing
+
+timestamp
+
+
+Fitur keamanan:
+
+Sandboxed WASM
+
+Gas/compute model
+
+Deterministic execution
+
+State isolation
+
 
 
 ---
 
+🧪 Test Suite
 
-2.4 Lending (simplified)
+Test-suite lengkap mencakup:
 
-module Lending {
-    resource Loan { id: u64; borrower: address; amount: u128; collateral_nft: u64; due: u64 }
-    storage loans: map<u64, Loan>
-    storage next_loan: u64
+Unit test untuk compiler & VM
 
-    public fn borrow(collateral_nft: u64, amount: u128, duration_secs: u64) -> u64 {
-        // transfer NFT to escrow
-        PiNFT::transfer(collateral_nft, escrow_address);
-        let id = next_loan; next_loan = next_loan + 1;
-        loans[id] = Loan { id: id, borrower: tx.sender, amount: amount, collateral_nft: collateral_nft, due: ledger::timestamp() + duration_secs };
-        ledger::credit(tx.sender, amount);
-        event::emit("Borrow", id, tx.sender, amount);
-        return id;
-    }
+Integration test untuk contoh kontrak
 
-    public fn repay(id: u64) {
-        let loan = loans[id];
-        require(loan.borrower == tx.sender, "not borrower");
-        ledger::debit(tx.sender, loan.amount);
-        // return collateral
-        PiNFT::transfer(loan.collateral_nft, tx.sender);
-        delete loans[id];
-        event::emit("Repay", id);
-    }
-}
+Fuzzer (mutasi input → cari crash)
 
-2.5 DAO governance (simplified)
+Static Analyzer (pi-audit)
 
-module DAO {
-    resource Proposal { id: u64; proposer: address; description: string; votes_for: u128; votes_against: u128; open: bool }
-    storage proposals: map<u64, Proposal>
-    storage next_proposal: u64
 
-    public fn propose(description: string) -> u64 {
-        let id = next_proposal; next_proposal = next_proposal + 1;
-        proposals[id] = Proposal { id: id, proposer: tx.sender, description: description, votes_for: 0, votes_against: 0, open: true };
-        event::emit("Proposed", id, tx.sender);
-        return id;
-    }
+Contoh test:
 
-    public fn vote(id: u64, support: bool, weight: u128) {
-        let p = proposals[id];
-        require(p.open, "closed");
-        if (support) { p.votes_for = p.votes_for + weight; } else { p.votes_against = p.votes_against + weight; }
-        proposals[id] = p;
-    }
+assert_exec("transfer", args=[alice, bob, 100])
+assert_balance(bob) == 100
 
-    public fn finalize(id: u64) {
-        let p = proposals[id]; require(p.proposer == tx.sender || tx.sender == dao_admin, "unauthorized");
-        p.open = false; proposals[id] = p;
-        event::emit("Finalized", id, p.votes_for, p.votes_against);
-    }
-}
+
+---
+
+🛠️ SDK Integration
+
+JavaScript
+
+Mendukung:
+
+Load WASM
+
+Generate transaction
+
+Sign with Pi Wallet
+
+Submit to local/testnet node
+
+
+Python
+
+Cocok untuk backend & automation:
+
+Contract call helpers
+
+WASM inspector
+
+Test runner
+
+
+
+---
+
+🏛️ Governance & Module Lifecycle
+
+Model governance prediktif:
+
+1. Developer submit module (signed).
+
+
+2. Nodes menjalankan verifikasi & sandbox test.
+
+
+3. DAO vote untuk registrasi module.
+
+
+4. Deployment ke mainnet staging.
+
+
+5. Final activation.
+
+
+
+
+---
+
+🚀 Contoh Kontrak Produksi
+
+Repositori ini menyediakan contoh lengkap:
+
+PiToken — token standar
+
+PiNFT — non-fungible token
+
+PiDEX — decentralized exchange
+
+PiLend — lending/borrowing
+
+PiDAO — governance
+
+Marketplace — escrow & orderbook
+
+
+Setiap kontrak memiliki:
+
+Sumber .pi
+
+WASM compile output
+
+metadata.json (ABI)
+
+Unit test
+
+Integration test
+
+
+
+---
+
+📡 Node & Consensus (Analisis Prediktif)
+
+Pi Network tampaknya menggunakan:
+
+Federated consensus mirip Stellar
+
+Constraint Ledger (ALGO-like) untuk validasi state
+
+Deterministic transaction ordering
+
+Node sandbox untuk smart contract
+
+
+Kontrak tidak dijalankan oleh validator penuh → PiVM terpisah sebagai layer execution.
+
+
+---
+
+🧭 Roadmap
+
+Daftar lengkap roadmap ada di file: ROADMAP.md
+
+Highlight:
+
+✔ Bahasa v1 draft
+
+✔ Compiler front-end
+
+☐ PiVM runtime
+
+☐ WASM backend
+
+☐ SDK JS & Python
+
+☐ Contoh kontrak produksi
+
+☐ Testnet local cluster
+
+☐ Auditor tool
+
+☐ Mainnet-ready release
+
+
+
+---
+
+🤝 Kontribusi
+
+Kami mendorong kontribusi komunitas:
+
+Tambah kontrak baru
+
+Audit code
+
+Perbaiki compiler
+
+Buat tutorial
+
+Tambahkan test
+
+
+
+---
+
+🔐 Status Keamanan
+
+⚠ Semua komponen masih dalam tahap prediktif dan tidak aman untuk digunakan di jaringan produksi.
+
+
+---
+
+📄 Lisensi
+
+MIT License — bebas digunakan, diubah, dan dikembangkan oleh komunitas.
+
+
+---
+
+💬 Kontak & Dukungan
+
+Untuk diskusi, ide, atau kolaborasi:
+
+Issues (GitHub)
+
+Diskusi komunitas Pi
+
+
 
