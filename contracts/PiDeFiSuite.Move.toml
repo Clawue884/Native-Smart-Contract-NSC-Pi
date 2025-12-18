@@ -1,0 +1,106 @@
+// ===================================================== // Pi NSC DeFi Suite – Core Contracts (Move-like) // Target: Pi Network Native Smart Contract (NSC) // =====================================================
+
+address 0xPI {
+
+// ----------------------------------------------------- // MODULE: PiToken – Native DeFi Asset // ----------------------------------------------------- module PiToken { struct Token has key { total_supply: u64, }
+
+struct Balance has key {
+    amount: u64,
+}
+
+public fun init(admin: &signer, supply: u64) {
+    move_to(admin, Token { total_supply: supply });
+    move_to(admin, Balance { amount: supply });
+}
+
+public fun transfer(from: &signer, to: address, amount: u64) {
+    let sender = borrow_global_mut<Balance>(signer::address_of(from));
+    assert!(sender.amount >= amount, 1);
+    sender.amount = sender.amount - amount;
+
+    if (!exists<Balance>(to)) {
+        move_to(&create_signer(to), Balance { amount: 0 });
+    };
+    let receiver = borrow_global_mut<Balance>(to);
+    receiver.amount = receiver.amount + amount;
+}
+
+}
+
+// ----------------------------------------------------- // MODULE: PriceOracle – Median Oracle // ----------------------------------------------------- module PriceOracle { struct Oracle has key { price: u64, last_update: u64, }
+
+public fun update(admin: &signer, price: u64, timestamp: u64) {
+    if (!exists<Oracle>(@0xPI)) {
+        move_to(admin, Oracle { price, last_update: timestamp });
+    } else {
+        let o = borrow_global_mut<Oracle>(@0xPI);
+        o.price = price;
+        o.last_update = timestamp;
+    }
+}
+
+public fun read(): u64 {
+    borrow_global<Oracle>(@0xPI).price
+}
+
+}
+
+// ----------------------------------------------------- // MODULE: LendingPool – Lending & Borrowing // ----------------------------------------------------- module LendingPool { use 0xPI::PiToken; use 0xPI::PriceOracle;
+
+struct Position has key {
+    collateral: u64,
+    debt: u64,
+}
+
+const COLLATERAL_FACTOR: u64 = 150; // 150%
+
+public fun deposit(user: &signer, amount: u64) {
+    PiToken::transfer(user, @0xPI, amount);
+    move_to(user, Position { collateral: amount, debt: 0 });
+}
+
+public fun borrow(user: &signer, amount: u64) {
+    let pos = borrow_global_mut<Position>(signer::address_of(user));
+    let price = PriceOracle::read();
+    let max_borrow = pos.collateral * price * 100 / COLLATERAL_FACTOR;
+    assert!(pos.debt + amount <= max_borrow, 2);
+    pos.debt = pos.debt + amount;
+    PiToken::transfer(&create_signer(@0xPI), signer::address_of(user), amount);
+}
+
+}
+
+// ----------------------------------------------------- // MODULE: PiDEX – Automated Market Maker (AMM) // ----------------------------------------------------- module PiDEX { struct Pool has key { reserve_x: u64, reserve_y: u64, }
+
+public fun init(admin: &signer, x: u64, y: u64) {
+    move_to(admin, Pool { reserve_x: x, reserve_y: y });
+}
+
+public fun swap_x_for_y(user: &signer, dx: u64): u64 {
+    let pool = borrow_global_mut<Pool>(@0xPI);
+    let dy = (dx * pool.reserve_y) / (pool.reserve_x + dx);
+    pool.reserve_x = pool.reserve_x + dx;
+    pool.reserve_y = pool.reserve_y - dy;
+    dy
+}
+
+}
+
+// ----------------------------------------------------- // MODULE: PiDAO – Governance // ----------------------------------------------------- module PiDAO { struct Proposal has key { votes_yes: u64, votes_no: u64, executed: bool, }
+
+public fun propose(admin: &signer) {
+    move_to(admin, Proposal { votes_yes: 0, votes_no: 0, executed: false });
+}
+
+public fun vote(voter: &signer, support: bool) {
+    let p = borrow_global_mut<Proposal>(@0xPI);
+    if (support) {
+        p.votes_yes = p.votes_yes + 1;
+    } else {
+        p.votes_no = p.votes_no + 1;
+    }
+}
+
+}
+
+} // end address
